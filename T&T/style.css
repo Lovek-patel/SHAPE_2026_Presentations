@@ -1,0 +1,60 @@
+/* ============================================
+   Tubes & Tissues — Course Slide Deck
+   Kate Iza & Love Patel · SHAPE Program 2026
+   ============================================ */
+
+/* ============================================
+   This file provides supplementary overrides
+   for the self-contained styles embedded in
+   index.html. Most styles live inline there.
+   Add component-specific overrides here.
+   ============================================ */
+
+/* ── Print / Export ── */
+@media print {
+  .navzone, #daynav, #brandmark, #progress-track { display: none !important; }
+  .slide { position: relative !important; opacity: 1 !important; visibility: visible !important; transform: none !important; page-break-after: always; }
+  [data-frag] { opacity: 1 !important; transform: none !important; }
+}
+
+/* ── Focus / Accessibility ── */
+button:focus-visible { outline: 2px solid #D97757; outline-offset: 2px; }
+
+/* ── Slide transitions: reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: opacity 0.2s; }
+  .flowline path { animation: none; stroke-dashoffset: 0; }
+  [data-frag] { transition: none; }
+}
+
+/* ── Canvas elements ── */
+canvas { display: block; }
+
+/* ── Day 5 simulator screenshot ── */
+.sim-screenshot {
+  width: 100%;
+  border-radius: 14px;
+  border: 2px solid #CFE7E2;
+  display: block;
+}
+
+/* ── Day 10 bioprint / organoid full-bleed images ── */
+.bio-hero {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+}
+
+/* ── Utility: visually hidden (screen reader only) ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
