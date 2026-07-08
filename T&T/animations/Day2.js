@@ -5,8 +5,8 @@ DAYS.push({label:'Day 2 — Regenerative Medicine', short:'D2', slides:[
 
 /* ── OPENING HOOK ───────────────────────────────────────────────── */
 {title:'Ten years on dialysis. Worse survival odds than most cancers.',
- kind:'Opening', kicker:'The problem in one sentence',
- block:{type:'callout-large', text:'That is the standard treatment, not a failure of it. Why is it still the default? What would actually replace it?'}},
+ kind:'Opening', kicker:'The problem',
+ block:{type:'callout-large', text:'That is the standard treatment. Why is it still the default? What would actually replace it?'}},
 
 /* ── SCALE ───────────────────────────────────────────────────────── */
 {title:'The scale of the problem', kind:'Context', kicker:'25.1',
@@ -48,7 +48,7 @@ DAYS.push({label:'Day 2 — Regenerative Medicine', short:'D2', slides:[
  ]}},
 
 /* ── WHAT DIALYSIS REPLACES ──────────────────────────────────────── */
-{title:'What dialysis actually replaces', kind:'Core idea', kicker:'25.3',
+{title:'What dialysis  replaces', kind:'Core idea', kicker:'25.3',
  block:{type:'split-visual',
    body:[
      '<strong>Filtration</strong> — partial. ~180 L/day natively vs. ~40 L/week on dialysis',
@@ -58,7 +58,7 @@ DAYS.push({label:'Day 2 — Regenerative Medicine', short:'D2', slides:[
    diagram:'<img src="assets/dialysis.jpg" alt="Dialysis schematic" style="width:100%;border-radius:12px;">'}},
 
 /* ── CONSEQUENCES ────────────────────────────────────────────────── */
-{title:'What the body does instead', kind:'Consequence', kicker:'Why it matters',
+{title:'What the body does', kind:'Consequence', kicker:'Why it matters',
  block:{type:'bullets', items:[
    '<strong>Acidosis</strong> — bicarbonate added to dialysate to buffer what builds up between sessions',
    '<strong>Potassium swings</strong> — strict diet limits, risky shifts during treatment',
@@ -79,7 +79,7 @@ DAYS.push({label:'Day 2 — Regenerative Medicine', short:'D2', slides:[
  block:{type:'callout-large', text:'A device that costs a million dollars and needs a major academic medical center to operate does not solve ESRD for the world. It solves it for a narrow slice of it.'}},
 
 /* ── DISCUSSION ──────────────────────────────────────────────────── */
-{title:'What does it mean to replace an organ?', kind:'Discussion', kicker:'Before we go further',
+{title:'What does it mean to replace an organ?', kind:'Discussion', kicker:'Turn and Talk',
  block:{type:'discussion', q:[
    'Is a machine that filters blood a kidney?',
    "Is a clump of cells that can't filter anything yet?",
@@ -88,7 +88,7 @@ DAYS.push({label:'Day 2 — Regenerative Medicine', short:'D2', slides:[
 
 /* ── BRIDGE QUOTE ────────────────────────────────────────────────── */
 {title:'The bridge between science and the clinic', kind:'Framing', kicker:'A theme for the course',
- block:{type:'quote', text:'Understanding these things mathematically does not diminish their biological elegance. It deepens it.', cite:'On studying the kidney before rebuilding it'}},
+ block:{type:'quote', text:'Understanding these things mathematically does not diminish their biological elegance.', cite:'On studying the kidney before rebuilding it'}},
 
 /* ── METHODS OVERVIEW (NEW SLIDE) ────────────────────────────────── */
 {title:'The approaches we will study', kind:'Methods survey', kicker:'Four strategies',
@@ -97,6 +97,28 @@ DAYS.push({label:'Day 2 — Regenerative Medicine', short:'D2', slides:[
    {icon:'branch',  h:'Organoids',         p:'Grow kidney-like tissue from reprogrammed stem cells in a dish.'},
    {icon:'grid',    h:'Bioprinting',       p:'Place cells in precise spatial patterns using a biological 3D printer.'},
    {icon:'chip',    h:'Kidney-on-chip',    p:'Microfluidic devices that replicate nephron function with real flow.'},
+ ]}},
+
+/* ── WHY THE KIDNEY FAILS: CHRONIC / SYSTEMIC ───────────────────── */
+{title:'Why kidneys fail: slow', kind:'Pathology', kicker:'Chronic kidney disease',
+ block:{type:'icon-row', items:[
+   {icon:'drop',   h:'Diabetes mellitus',
+    p:'Chronically high glucose glycates the GBM and drives hyperfiltration. Podocytes are lost, the filtration barrier thickens and leaks. Diabetic nephropathy is the leading cause of ESRD worldwide.'},
+   {icon:'pulse',  h:'Hypertension',
+    p:'Elevated systemic pressure is transmitted to the glomerulus when autoregulation fails. Afferent arterioles thicken, glomerulosclerosis develops, and GFR erodes over years.'},
+   {icon:'shield', h:'Glomerulonephritis',
+    p:'Immune-mediated inflammation directly targets the filtration barrier. IgA nephropathy, lupus nephritis, and FSGS all attack the glomerulus through different mechanisms, but the endpoint is the same: scarred, non-functional nephrons.'},
+ ]}},
+
+/* ── WHY THE KIDNEY FAILS: ACUTE / OBSTRUCTIVE ──────────────────── */
+{title:'Why kidneys fail: fast', kind:'Pathology', kicker:'Acute and obstructive',
+ block:{type:'icon-row', items:[
+   {icon:'grid',   h:'Kidney stones',
+    p:'Supersaturation of calcium oxalate, uric acid, or struvite causes crystal nucleation in the tubular lumen. Small stones pass; large ones obstruct urinary flow, raise pressure in Bowman\'s space, and can reduce GFR to near zero in the affected kidney within hours.'},
+   {icon:'wave',   h:'Acute kidney injury (AKI)',
+    p:'Three categories: prerenal (inadequate blood flow: sepsis, hemorrhage), intrinsic (tubular cell death from ischemia or nephrotoxins like NSAIDs and contrast), and postrenal (downstream obstruction). AKI can be reversible, but repeated episodes accelerate CKD.'},
+   {icon:'layers', h:'Congenital and structural',
+    p:'Polycystic kidney disease (PKD) causes progressive cyst growth that physically crowds out functional parenchyma. Reflux nephropathy scars the kidney through recurrent infection. These are not lifestyle diseases.'},
  ]}},
 
 /* ── ROADMAP ─────────────────────────────────────────────────────── */
@@ -111,6 +133,6 @@ DAYS.push({label:'Day 2 — Regenerative Medicine', short:'D2', slides:[
 /* ── END OF DAY PROJECT REMINDER ─────────────────────────────────── */
 {layout:'project', kicker:'Project Reminder', title:'Make a Fake Organ',
  subtitle:'Your final project is to design and build (or model) a functional organ analog. It must demonstrate at least one physiological function. It does not have to be a kidney.',
- progress:'By Day 2: You should be thinking about what organ function interests you most. No commitment yet, just curiosity.'},
+ progress:'By Day 2: You should be thinking about what organ function interests you most. Start thinking about your groups 8 groups of 3, 2 groups of 2.'},
 
 ]});
