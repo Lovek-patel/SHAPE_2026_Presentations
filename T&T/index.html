@@ -287,6 +287,25 @@ h2.title{font-family:var(--font-display);font-weight:500;font-size:clamp(44px,3.
 .pres-slide .ps-r .ps-dot{width:7px;height:7px;border-radius:50%;background:var(--clay);flex:none;margin-top:7px;}
 .pres-slide .ps-r p{margin:0;font-size:22px;color:rgba(255,255,255,.75);line-height:1.5;}
 
+/* ── CHIP FLOW ANIMATION ── */
+.chip-anim-wrap{width:100%;height:180px;position:relative;border-radius:14px;overflow:hidden;background:var(--teal-950);margin-bottom:10px;}
+#chip-canvas{position:absolute;inset:0;width:100%;height:100%;}
+.chip-labels{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-bottom:8px;}
+
+/* ── DIFFUSION ANIMATION ── */
+.diffusion-anim-wrap{width:100%;height:140px;position:relative;border-radius:14px;overflow:hidden;margin-bottom:10px;}
+#diffusion-canvas{position:absolute;inset:0;width:100%;height:100%;}
+
+/* ── MATH CALLOUT (for in-slide equations with context) ── */
+.math-callout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch;}
+.math-callout .mc-left{display:flex;flex-direction:column;gap:14px;}
+.math-callout .mc-right{background:var(--teal-950);border-radius:14px;padding:28px 32px;display:flex;flex-direction:column;gap:12px;}
+.math-callout .mc-right .eq{font-family:var(--font-mono);font-size:clamp(16px,1.8vw,22px);color:#fff;}
+.math-callout .mc-right .eq .hl{color:var(--clay);}
+.math-callout .mc-right .note{font-size:16px;color:var(--teal-200);margin-top:6px;}
+.math-callout .mc-tag{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--clay-dark);margin-bottom:4px;}
+.math-callout .mc-body{font-size:19px;color:var(--ink);line-height:1.55;}
+
 /* ── FULL IMAGE SLIDE BLOCK ── */
 .full-image-block{width:100%;flex:1;display:flex;flex-direction:column;gap:12px;min-height:0;}
 .full-image-block img{width:100%;flex:1;object-fit:cover;border-radius:16px;display:block;min-height:0;}
@@ -607,6 +626,195 @@ function initChargeAnim(canvas) {
   tick();
 }
 
+/* Chip flow animation — two-channel microfluidic chip */
+function initChipAnim(canvas) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  canvas.width = W; canvas.height = H;
+
+  const MID = H * 0.5;
+  const MEMBRANE_H = 6;
+  // Upper channel: blood side (teal particles)
+  // Lower channel: filtrate side (lighter particles)
+  const upperParticles = [];
+  const lowerParticles = [];
+  const crossingParticles = []; // particles crossing the membrane
+
+  function spawnUpper() {
+    return { x: -8, y: MID * 0.2 + Math.random() * MID * 0.55, r: 3.5, vx: 1.8 + Math.random()*0.6, vy:(Math.random()-0.5)*0.2, color:'rgba(31,131,119,0.85)', type:'blood' };
+  }
+  function spawnLower() {
+    return { x: -8, y: MID + MEMBRANE_H + MID*0.1 + Math.random()*MID*0.55, r: 2.5, vx: 1.4+Math.random()*0.4, vy:(Math.random()-0.5)*0.15, color:'rgba(100,180,160,0.7)', type:'filtrate' };
+  }
+  // Pre-populate
+  for(let i=0;i<12;i++){const p=spawnUpper();p.x=Math.random()*W;upperParticles.push(p);}
+  for(let i=0;i<8;i++){const p=spawnLower();p.x=Math.random()*W;lowerParticles.push(p);}
+
+  let tick = 0;
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+
+    // Background channels
+    ctx.fillStyle='rgba(14,59,54,0.9)';
+    ctx.fillRect(0,0,W,MID-MEMBRANE_H/2);
+    ctx.fillStyle='rgba(20,80,70,0.7)';
+    ctx.fillRect(0,MID+MEMBRANE_H/2,W,H-MID-MEMBRANE_H/2);
+
+    // Membrane
+    ctx.fillStyle='rgba(207,231,226,0.9)';
+    ctx.fillRect(0,MID-MEMBRANE_H/2,W,MEMBRANE_H);
+    // Pore dots on membrane
+    for(let px=30;px<W;px+=28){
+      ctx.beginPath();ctx.arc(px,MID,2.5,0,Math.PI*2);
+      ctx.fillStyle='rgba(14,59,54,0.6)';ctx.fill();
+    }
+
+    // Labels
+    ctx.fillStyle='rgba(207,231,226,0.6)';
+    ctx.font=`${Math.round(W*0.012)}px sans-serif`;
+    ctx.fillText('Blood side (GEnCs)',8,18);
+    ctx.fillText('Filtrate side (Podocytes)',8,H-8);
+
+    // Arrows showing flow direction
+    const arrowY1 = MID*0.5;
+    const arrowY2 = MID + MEMBRANE_H/2 + MID*0.5;
+    [arrowY1,arrowY2].forEach((ay,i)=>{
+      ctx.fillStyle=i===0?'rgba(31,131,119,0.4)':'rgba(100,180,160,0.3)';
+      ctx.font=`${Math.round(W*0.018)}px sans-serif`;
+      ctx.fillText('→',W*0.85,ay+5);
+    });
+
+    // Upper blood particles
+    upperParticles.forEach((p,i)=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.y<4){p.y=4;p.vy*=-1;}
+      if(p.y>MID-MEMBRANE_H/2-p.r){p.y=MID-MEMBRANE_H/2-p.r;p.vy*=-1;}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color;ctx.fill();
+      if(p.x>W+p.r){upperParticles[i]=spawnUpper();}
+    });
+    if(upperParticles.length<14&&Math.random()<0.04)upperParticles.push(spawnUpper());
+
+    // Lower filtrate particles
+    lowerParticles.forEach((p,i)=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.y<MID+MEMBRANE_H/2+p.r){p.y=MID+MEMBRANE_H/2+p.r;p.vy*=-1;}
+      if(p.y>H-p.r){p.y=H-p.r;p.vy*=-1;}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color;ctx.fill();
+      if(p.x>W+p.r){lowerParticles[i]=spawnLower();}
+    });
+    if(lowerParticles.length<10&&Math.random()<0.03)lowerParticles.push(spawnLower());
+
+    // Crossing particles (small solutes passing through pores)
+    crossingParticles.forEach((p,i)=>{
+      p.y+=p.vy;
+      if(p.y>MID+MEMBRANE_H/2+4){crossingParticles.splice(i,1);return;}
+      const alpha=1-Math.abs(p.y-MID)/(MEMBRANE_H*3);
+      ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);
+      ctx.fillStyle=`rgba(185,220,200,${Math.max(0,alpha)})`;ctx.fill();
+    });
+    // Spawn crossing particles occasionally
+    if(tick%45===0){
+      const poreX=30+Math.floor(Math.random()*Math.floor((W-60)/28))*28;
+      crossingParticles.push({x:poreX,y:MID-MEMBRANE_H/2,vy:1.2});
+    }
+    tick++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* Diffusion gradient animation — oxygen concentration along tissue depth */
+function initDiffusionAnim(canvas) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  canvas.width = W; canvas.height = H;
+
+  let t = 0;
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+
+    // Background
+    ctx.fillStyle='#0A2E2B';
+    ctx.fillRect(0,0,W,H);
+
+    // Draw exponential decay curve: C(x) = C0 * exp(-x/L)
+    // Left = surface (blood vessel), Right = deep tissue
+    const C0 = H * 0.82;
+    const L = W * 0.38;
+
+    // Colored gradient background showing oxygen concentration
+    const grad = ctx.createLinearGradient(0,0,W,0);
+    grad.addColorStop(0,'rgba(31,131,119,0.35)');
+    grad.addColorStop(0.4,'rgba(31,131,119,0.12)');
+    grad.addColorStop(1,'rgba(181,64,44,0.18)');
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,W,H);
+
+    // Critical distance line at ~200µm (normalized)
+    const critX = W * 0.32;
+    ctx.save();
+    ctx.setLineDash([5,5]);
+    ctx.strokeStyle='rgba(181,64,44,0.7)';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(critX,0);ctx.lineTo(critX,H);ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle='rgba(181,64,44,0.85)';
+    ctx.font='bold 11px sans-serif';
+    ctx.fillText('~200 µm',critX+4,14);
+
+    // Animated particles drifting rightward (diffusion)
+    // Pre-seeded based on t
+    for(let i=0;i<18;i++){
+      const seed = (i*137.5+t*0.4)%360;
+      const px = (seed/360)*W*1.1;
+      const py = 10+Math.random()*0*(i)+((i*73)%(H-20));
+      // opacity drops with x (oxygen consumed)
+      const ox = (seed/360);
+      const alpha = Math.max(0,0.85-ox*1.1);
+      const r = 2.5-ox*1;
+      if(r>0.5){
+        ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(180,230,210,${alpha})`;ctx.fill();
+      }
+    }
+
+    // The exponential curve
+    ctx.beginPath();
+    ctx.moveTo(0, H - C0);
+    for(let x=0;x<W;x++){
+      const c = C0*Math.exp(-x/L);
+      ctx.lineTo(x, H-c);
+    }
+    ctx.strokeStyle='rgba(207,231,226,0.9)';
+    ctx.lineWidth=2.5;
+    ctx.stroke();
+
+    // Area under curve (oxygenated zone)
+    ctx.beginPath();
+    ctx.moveTo(0,H);
+    for(let x=0;x<W;x++){const c=C0*Math.exp(-x/L);ctx.lineTo(x,H-c);}
+    ctx.lineTo(W,H);ctx.closePath();
+    ctx.fillStyle='rgba(31,131,119,0.12)';ctx.fill();
+
+    // Labels
+    ctx.fillStyle='rgba(207,231,226,0.7)';
+    ctx.font='11px sans-serif';
+    // ctx.fillText('C(x) = C₀·e^(−x/L)',8,H-Math.round(C0)+16);
+    ctx.fillStyle='rgba(100,160,140,0.7)';
+    ctx.fillText('Blood vessel',4,H-12);
+    ctx.fillStyle='rgba(181,64,44,0.8)';
+    ctx.fillText('Necrotic core',W-82,H-12);
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
 /* ============================ SLIDE RENDERERS ============================ */
 function el(html){const d=document.createElement('div');d.innerHTML=html.trim();return d.firstChild;}
 
@@ -708,6 +916,10 @@ function render(slide, dayLabel){
     if(fc) initFiltrationAnim(fc);
     const cc = wrap.querySelector('#charge-canvas');
     if(cc) initChargeAnim(cc);
+    const chc = wrap.querySelector('#chip-canvas');
+    if(chc) initChipAnim(chc);
+    const dc = wrap.querySelector('#diffusion-canvas');
+    if(dc) initDiffusionAnim(dc);
   });
 
   return wrap;
@@ -878,6 +1090,29 @@ function renderBlock(b){
           <div class="ce-label"><span>Restore</span></div>
           <div class="ce-content"><div class="ce-restore">${b.restore}</div></div>
         </div>`:''}
+      </div>`;
+
+    case 'chip-animation':
+      return `<div>
+        <div class="chip-labels"><span>Blood enters (arterial)</span><span>Filtrate exits</span></div>
+        <div class="chip-anim-wrap"><canvas id="chip-canvas"></canvas></div>
+      </div>`;
+
+    case 'diffusion-animation':
+      return `<div>
+        <div class="diffusion-anim-wrap"><canvas id="diffusion-canvas"></canvas></div>
+      </div>`;
+
+    case 'math-callout':
+      return `<div class="math-callout">
+        <div class="mc-left">
+          <span class="mc-tag">${b.tag||'Math connection'}</span>
+          <p class="mc-body">${b.body}</p>
+        </div>
+        <div class="mc-right">
+          ${b.lines.map(l=>`<div class="eq">${l}</div>`).join('')}
+          ${b.note?`<div class="note">${b.note}</div>`:''}
+        </div>
       </div>`;
 
     default: return '';
